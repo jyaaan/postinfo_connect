@@ -3,10 +3,10 @@ CRM for postinfo
 
 things we have to be able to do:
 
-Import leads
-assign leads to campaigns
-send emails
-schedule actions.
+-Import leads
+-assign leads to campaigns
+-send emails
+-schedule actions.
 
-other features
-freeze actions on individual profiles
+other features:
+-freeze actions on individual profiles
