@@ -10,3 +10,5 @@ const Home = props => {
     </div>
   )
 }
+
+module.exports = Home;
