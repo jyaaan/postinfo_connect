@@ -46,12 +46,13 @@
     "npm": "^5.8.0",
     "pg": "^6.4.2",
     "pg-format": "^1.0.4",
+    "pug": "^2.0.3",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "redux": "^3.7.2",
+    "request": "^2.85.0",
     "selenium-webdriver": "^3.6.0",
-    "semantic-ui-react": "^0.70.0",
-    "request": "^2.85.0"
+    "semantic-ui-react": "^0.70.0"
   },
   "devDependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",
