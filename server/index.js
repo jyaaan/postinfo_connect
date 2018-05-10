@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 // Temporary classes for testing
 // Nothing in production should be here
 const pug = require('pug');
-const templatePath = require('path').join(__dirname, '/email_templates');
+const templatePath = require('path').join(__dirname, '/public/email_templates');
 
 // Testing endpoint to return time as string
 app.get('/test', (req, res) => {
