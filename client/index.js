@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const store = require('./store');
 const Home = require('./home');
-const FileLoader = requie('./file_loader')
+const FileLoader = require('./file_loader')
 
 const render = () => {
   const state = store.getState();
