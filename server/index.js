@@ -27,6 +27,9 @@ app.get('/pug', (req, res) => {
   res.send(pug.renderFile(templatePath + '/template.pug', {
     first_name: 'FIRST NAME'
   }))
+  console.log(pug.renderFile(templatePath + '/template.pug', {
+    first_name: 'FIRST NAME'
+  }));
 })
 
 http.listen(PORT || 5760, () => {
