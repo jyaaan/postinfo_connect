@@ -32,6 +32,6 @@ app.get('/pug', (req, res) => {
   }));
 })
 
-http.listen(PORT || 5760, () => {
-  console.log('listening on port: ', PORT || 5760);
+http.listen(PORT || 6000, () => {
+  console.log('listening on port: ', PORT || 6000);
 })
