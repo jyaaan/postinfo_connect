@@ -2,7 +2,7 @@
   "name": "postinfo_connect",
   "version": "1.0.0",
   "description": "Postinfo CRM",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
     "test": "mocha",
     "bundle": "browserify client/ -t babelify -o server/public/main.js",
@@ -55,10 +55,11 @@
     "semantic-ui-react": "^0.70.0"
   },
   "devDependencies": {
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "babel-preset-react-native": "^2.0.0",
+    "babel-preset-react-native": "^2.1.0",
     "babelify": "^7.3.0",
     "browserify": "^14.5.0",
     "nodemon": "^1.17.2",
