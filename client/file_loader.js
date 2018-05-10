@@ -49,3 +49,5 @@ const FileLoader = props => {
   </div>
   )
 }
+
+module.exports = FileLoader;
