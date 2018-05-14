@@ -9,45 +9,59 @@ const handleFile = event => {
   var data = null;
   var file = event.target.files[0];
   var reader = new FileReader();
-  var usernames = [];
 
-  csv()
-    .fromStream(file)
-    .on('json', (jsonObj) => {
-      console.log(jsonObj);
+  reader.readAsText(file);
+  reader.onload = function (loadEvent) {
+    var csvData = loadEvent.target.result;
+    csv()
+    .fromString(csvData)
+    .on('end_parsed', leads => {
+      console.log(leads);
+      alert('attempting to import ' + leads.length + ' leads.');
+      const key = store.getState().key;
+      store.dispatch({
+        type: 'UPLOAD_LEADS',
+        leads: leads,
+        key: key
+      });
     })
-  // reader.readAsText(file);
-  // reader.onload = function (loadEvent) {
-  //   var csvData = loadEvent.target.result;
-  //   var testArray = csvData.split('\n');
-  //   testArray.splice(-1, 1);
-  //   var latestArray = testArray.map(arr => {
-  //     return arr.replace('\r', '');
-  //   })
-  //   // if (data && data.length > 0) {
-  //   //   alert('Imported' + ' ' + data.length + ' ' + 'rows.');
-  //   //   console.log(data);
-  //   // }
-  //   // reader.onerror = function () {
-  //   //   alert('Unable to read' + ' ' + file.fileName);
-  //   // }
-  //   // store.dispatch({
-  //   //   type: 'UPLOAD_LEADS',
-  //   //   leads: latestArray
-  //   // });
-  // }
+    reader.onerror = function () {
+      alert('Unable to read' + ' ' + file.fileName);
+    }
+  }
+}
+
+const handleChange = event => {
+  store.dispatch({
+    type: 'API_KEY_INPUT_CHANGED',
+    key: event.target.value
+  });
+};
+
+const getKey = leads => {
+
 }
 
 const FileLoader = props => {
   return (
-  <div>
-    <legend>Upload your leads</legend>
-    <input type="file"
-      name="File Upload"
-      id="csv-upload"
-      accept=".csv"
-      onChange={handleFile} />
-  </div>
+    <div className='ui eight column centered row'>
+      <div className='ui action input'>
+        <input
+          type='text'
+          placeholder='API Key'
+          onChange={handleChange}>
+        </input>
+
+      </div>
+      <div>
+        <legend>Upload your leads</legend>
+        <input type="file"
+          name="File Upload"
+          id="csv-upload"
+          accept=".csv"
+          onChange={handleFile} />
+      </div>
+    </div>
   )
 }
 
