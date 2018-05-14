@@ -17,10 +17,14 @@ app.use(bodyParser.json());
 const pug = require('pug');
 const templatePath = require('path').join(__dirname, '/public/email_templates');
 
-// Testing endpoint to return time as string
-app.get('/test', (req, res) => {
-  const timeNow = new Date();
-  res.send('the datetime is: ' + timeNow);
+const database = new (require('./database'))();
+const leads = new (require('./leads'))(database);
+
+app.get('/test-get', (req, res) => {
+  database.getRecord('name', 'someone', 'campaigns')
+    .then(result => {
+      console.log(result);
+    })
 })
 
 app.get('/pug', (req, res) => {
@@ -35,12 +39,41 @@ app.get('/pug', (req, res) => {
 app.post('/upload-leads', (req, res) => {
   res.sendStatus(200);
   if (req.body.key == 'eatifyjohn') {
-    console.log(req.body.leads);
+    leads.create(req.body.leads);
   } else {
     console.log('invalid key, not uploading');
   }
 })
 
-http.listen(PORT || 5760, () => {
-  console.log('listening on port: ', PORT || 5760);
+app.get('/test-send/:campaign_id', (req, res) => {
+  res.sendStatus(200);
+  console.log(req.params.campaign_id);
+})
+
+app.post('/create-campaign', (req, res) => {
+  database.createRecord(req.body, 'campaigns')
+  .then(result => {
+      res.sendStatus(200);
+      console.log(result);
+    })
+    .catch(err => {
+      res.send(err)
+      console.error(err);
+    })
+})
+
+app.post('/update-campaign', (req, res) => {
+  database.updateRecord(req.body, 'campaigns', 'name', req.body.name)
+    .then(result => {
+      res.sendStatus(200);
+      console.log(result);
+    })
+    .catch(err => {
+      res.send(err)
+      console.error(err);
+    })
+})
+
+http.listen(PORT || 1560, () => {
+  console.log('listening on port: ', PORT || 1560);
 })

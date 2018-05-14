@@ -7,7 +7,7 @@ exports.up = function (knex, Promise) {
     table.unique('name');
     table.integer('lead_count');
     table.integer('drip_count');
-    table.string('stage').defaultTo('New');
+    table.string('stage').defaultTo('Planned');
     table.string('description', 5000);
     table.integer('step').defaultTo(0);
     table.timestamp('created_at').notNull();
