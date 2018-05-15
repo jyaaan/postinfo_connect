@@ -46,8 +46,10 @@ app.post('/upload-leads', (req, res) => {
 })
 
 app.get('/test-send/:campaign_id', (req, res) => {
-  res.sendStatus(200);
-  console.log(req.params.campaign_id);
+  database.getLeadsByCampaignId(req.params.campaign_id)
+  .then(leads => {
+    res.send(leads);
+  })
 })
 
 app.post('/create-campaign', (req, res) => {

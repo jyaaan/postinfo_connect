@@ -23,7 +23,7 @@ class Database {
     record.created_at = timeNow;
     record.updated_at = timeNow;
     return knex(tableName)
-      .insert(record);
+           .insert(record);
   }
 
   // Updates single record into specified table.
@@ -31,8 +31,8 @@ class Database {
     const timeNow = new Date(Date.now()).toISOString();
     record.updated_at = timeNow;
     return knex(tableName)
-      .where(updateKey, updateValue)
-      .update(record)
+           .where(updateKey, updateValue)
+           .update(record)
   }
 
   // Returns true if value for a column in specified table exists
@@ -48,8 +48,8 @@ class Database {
   // Returns all columns of single row of given table
   getRecord(recordKey, recordValue, tableName) {
     return knex(tableName)
-      .select('*')
-      .where(recordKey, recordValue)
+           .select('*')
+           .where(recordKey, recordValue)
   }
   
   upsertLead (lead) {
@@ -110,15 +110,22 @@ class Database {
       .where('instagram_username', 'in', usernames)
   }
 
+  getLeadsByCampaignId(campaignId) {
+    const subquery = knex('campaigns_leads').select('lead_id').where('campaign_id', campaignId)
+    return knex('leads')
+           .select('*')
+           .where('id', 'in', subquery)
+  }
+
   raw(query) {
     return new Promise((resolve, reject) => {
       knex.raw(query)
-        .then(result => {
-          resolve(result);
-        })
-        .catch(err => {
-          reject(err);
-        })
+      .then(result => {
+        resolve(result);
+      })
+      .catch(err => {
+        reject(err);
+      })
     })
   }
 }
