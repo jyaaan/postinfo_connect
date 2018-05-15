@@ -19,6 +19,7 @@ const templatePath = require('path').join(__dirname, '/public/email_templates');
 
 const database = new (require('./database'))();
 const leads = new (require('./leads'))(database);
+const campaigns = new (require('./campaigns'))(database);
 
 app.get('/test-get', (req, res) => {
   database.getRecord('name', 'someone', 'campaigns')
@@ -82,6 +83,27 @@ app.post('/update-campaign', (req, res) => {
       res.send(err)
       console.error(err);
     })
+})
+
+// Upserts row into campaigns-email templates join table. Templates can only be added to a given campaign once
+// Params: int campaign_id, int email_template_id, string (iso date format) scheduled_for e.g. "2015-03-25T12:00:00Z"
+// Returns 200 on successful upsert.
+app.post('/assign-template', (req, res) => {
+  campaigns.upsertCampaignsEmailTemplates(req.body);
+  res.sendStatus(200);
+})
+
+app.get('/activate-campaign/:campaignId', (req, res) => {
+  res.sendStatus(200);
+  campaigns.activate(req.params.campaignId);
+})
+
+app.post('/message-id', (req, res) => {
+  console.log(req.body.communication_id, req.body.message_id);
+  // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)
+  // .then(result => {
+
+  // })
 })
 
 http.listen(PORT || 1560, () => {

@@ -52,6 +52,7 @@ class Database {
            .where(recordKey, recordValue)
   }
   
+  // upserts should be generic with formatting done by record-specific classes
   upsertLead (lead) {
     const timeNow = new Date(Date.now()).toISOString();
     lead.created_at = timeNow;
@@ -101,6 +102,33 @@ class Database {
       .catch(err => {
         reject(err);
       })
+    })
+  }
+
+  upsertCampaignsEmailTemplates(insertObj) {
+    const timeNow = new Date(Date.now()).toISOString();
+    insertObj.updated_at = timeNow;
+    const updateObj = Object.assign({}, insertObj);
+    insertObj.created_at = timeNow;
+
+    delete updateObj.campaign_id;
+    delete updateObj.email_template_id;
+
+    return new Promise((resolve, reject) => {
+      const insert = knex('campaigns_email_templates').insert(insertObj);
+      const query = util.format(
+        '%s ON CONFLICT (campaign_id, email_template_id) DO UPDATE SET %s;',
+        insert.toString(),
+        formatConflictKeys(updateObj)
+      )
+      // console.log(query);
+      this.raw(query)
+        .then(result => {
+          resolve(result);
+        })
+        .catch(err => {
+          reject(err);
+        })
     })
   }
 
