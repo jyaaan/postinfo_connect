@@ -48,7 +48,15 @@ app.post('/upload-leads', (req, res) => {
 app.get('/test-send/:campaign_id', (req, res) => {
   database.getLeadsByCampaignId(req.params.campaign_id)
   .then(leads => {
-    res.send(leads);
+    const emails = leads.map(lead => {
+      return {
+        email: lead.email,
+        body: pug.renderFile(templatePath + '/template.pug', {
+          first_name: lead.first_name
+        })
+      }
+    })
+    res.send(emails);
   })
 })
 
