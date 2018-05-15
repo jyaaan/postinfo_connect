@@ -12,6 +12,10 @@ const http = require('http').createServer(app);
 app.use(staticMiddleware);
 app.use(bodyParser.json());
 
+// Modules
+
+var h2p = require('html2plaintext');
+
 // Temporary classes for testing
 // Nothing in production should be here
 const pug = require('pug');
@@ -50,11 +54,16 @@ app.get('/test-send/:campaign_id', (req, res) => {
   database.getLeadsByCampaignId(req.params.campaign_id)
   .then(leads => {
     const emails = leads.map(lead => {
+      const htmlBody = pug.renderFile(templatePath + '/template.pug', {
+        first_name: lead.first_name
+      })
+
+      const body = h2p(htmlBody);
+
       return {
         email: lead.email,
-        body: pug.renderFile(templatePath + '/template.pug', {
-          first_name: lead.first_name
-        })
+        htmlBody: htmlBody,
+        body: body 
       }
     })
     res.send(emails);
