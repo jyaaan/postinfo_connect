@@ -12,15 +12,24 @@ const http = require('http').createServer(app);
 app.use(staticMiddleware);
 app.use(bodyParser.json());
 
+// Modules
+
+var h2p = require('html2plaintext');
+
 // Temporary classes for testing
 // Nothing in production should be here
 const pug = require('pug');
 const templatePath = require('path').join(__dirname, '/public/email_templates');
 
-// Testing endpoint to return time as string
-app.get('/test', (req, res) => {
-  const timeNow = new Date();
-  res.send('the datetime is: ' + timeNow);
+const database = new (require('./database'))();
+const leads = new (require('./leads'))(database);
+const campaigns = new (require('./campaigns'))(database);
+
+app.get('/test-get', (req, res) => {
+  database.getRecord('name', 'someone', 'campaigns')
+    .then(result => {
+      console.log(result);
+    })
 })
 
 app.get('/pug', (req, res) => {
@@ -35,12 +44,78 @@ app.get('/pug', (req, res) => {
 app.post('/upload-leads', (req, res) => {
   res.sendStatus(200);
   if (req.body.key == 'eatifyjohn') {
-    console.log(req.body.leads);
+    leads.create(req.body.leads);
   } else {
     console.log('invalid key, not uploading');
   }
 })
 
-http.listen(PORT || 5760, () => {
-  console.log('listening on port: ', PORT || 5760);
+app.get('/test-send/:campaign_id', (req, res) => {
+  database.getLeadsByCampaignId(req.params.campaign_id)
+  .then(leads => {
+    const emails = leads.map(lead => {
+      const htmlBody = pug.renderFile(templatePath + '/template.pug', {
+        first_name: lead.first_name
+      })
+
+      const body = h2p(htmlBody);
+
+      return {
+        email: lead.email,
+        htmlBody: htmlBody,
+        body: body,
+        communication_id: 1
+      }
+    })
+    res.send(emails);
+  })
+})
+
+app.post('/create-campaign', (req, res) => {
+  database.createRecord(req.body, 'campaigns')
+  .then(result => {
+      res.sendStatus(200);
+      console.log(result);
+    })
+    .catch(err => {
+      res.send(err)
+      console.error(err);
+    })
+})
+
+app.post('/update-campaign', (req, res) => {
+  database.updateRecord(req.body, 'campaigns', 'name', req.body.name)
+    .then(result => {
+      res.sendStatus(200);
+      console.log(result);
+    })
+    .catch(err => {
+      res.send(err)
+      console.error(err);
+    })
+})
+
+// Upserts row into campaigns-email templates join table. Templates can only be added to a given campaign once
+// Params: int campaign_id, int email_template_id, string (iso date format) scheduled_for e.g. "2015-03-25T12:00:00Z"
+// Returns 200 on successful upsert.
+app.post('/assign-template', (req, res) => {
+  campaigns.upsertCampaignsEmailTemplates(req.body);
+  res.sendStatus(200);
+})
+
+app.get('/activate-campaign/:campaignId', (req, res) => {
+  res.sendStatus(200);
+  campaigns.activate(req.params.campaignId);
+})
+
+app.post('/message-id', (req, res) => {
+  console.log(req.body.communication_id, req.body.message_id);
+  // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)
+  // .then(result => {
+
+  // })
+})
+
+http.listen(PORT || 1560, () => {
+  console.log('listening on port: ', PORT || 1560);
 })
