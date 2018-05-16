@@ -63,7 +63,8 @@ app.get('/test-send/:campaign_id', (req, res) => {
       return {
         email: lead.email,
         htmlBody: htmlBody,
-        body: body 
+        body: body,
+        communication_id: 1
       }
     })
     res.send(emails);
