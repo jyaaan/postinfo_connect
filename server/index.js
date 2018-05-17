@@ -111,9 +111,9 @@ app.get('/activate-campaign/:campaignId', (req, res) => {
 })
 
 app.get('/get-sendable/:campaignId', (req, res) => {
-  res.sendStatus(200);
   campaigns.getCommsToSend(req.params.campaignId)
   .then(comms => {
+    res.sendStatus(comms);
     console.log(comms);
   })
 })
