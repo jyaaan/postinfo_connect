@@ -114,20 +114,19 @@ app.get('/get-sendable/:campaignId', (req, res) => {
   campaigns.getCommsToSend(req.params.campaignId)
   .then(comms => {
     res.send(comms);
-    console.log(comms);
+    // console.log(comms);
   })
 })
 
 app.post('/message-id', (req, res) => {
   console.log(req.body.communication_id, req.body.message_id);
-  res.sendStatus(200);
-  // communications.markAsSent(req.body)
-  // .then(result => {
-  //   console.log(result);
-  //   setTimeout(() => {
-  //     res.sendStatus(200);
-  //   }, 300);
-  // })
+  communications.markAsSent(req.body)
+  .then(result => {
+    console.log(result);
+    setTimeout(() => {
+      res.sendStatus(200);
+    }, 300);
+  })
 
   // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)
   // .then(result => {
