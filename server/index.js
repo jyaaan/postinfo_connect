@@ -120,6 +120,7 @@ app.get('/get-sendable/:campaignId', (req, res) => {
 
 app.post('/message-id', (req, res) => {
   console.log(req.body.communication_id, req.body.message_id);
+  res.sendStatus(200);
   // communications.markAsSent(req.body)
   // .then(result => {
   //   console.log(result);
@@ -127,7 +128,7 @@ app.post('/message-id', (req, res) => {
   //     res.sendStatus(200);
   //   }, 300);
   // })
-  
+
   // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)
   // .then(result => {
 
