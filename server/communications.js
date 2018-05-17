@@ -25,8 +25,10 @@ class Communications {
   }
 
   markAsSent(object) {
+    const timeNow = new Date(Date.now()).toISOString();
     return this.database.updateRecord({
       status: 'Sent',
+      sent_at: timeNow,
       message_id: object.message_id
     }, 'communications', 'id', object.communication_id)
   }
