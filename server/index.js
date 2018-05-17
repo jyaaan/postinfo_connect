@@ -16,17 +16,20 @@ app.use(bodyParser.json());
 
 var h2p = require('html2plaintext');
 
+const database = new (require('./database'))();
+const communications = new (require('./communications'))(database);
+const leads = new (require('./leads'))(database);
+const templates = new (require('./templates'))(database);
+const campaigns = new (require('./campaigns'))(database, templates, leads, communications);
+
 // Temporary classes for testing
 // Nothing in production should be here
 const pug = require('pug');
 const templatePath = require('path').join(__dirname, '/public/email_templates');
 
-const database = new (require('./database'))();
-const leads = new (require('./leads'))(database);
-const campaigns = new (require('./campaigns'))(database);
 
 app.get('/test-get', (req, res) => {
-  database.getRecord('name', 'someone', 'campaigns')
+  database.getRecords('name', 'someone', 'campaigns')
     .then(result => {
       console.log(result);
     })
@@ -57,7 +60,6 @@ app.get('/test-send/:campaign_id', (req, res) => {
       const htmlBody = pug.renderFile(templatePath + '/template.pug', {
         first_name: lead.first_name
       })
-
       const body = h2p(htmlBody);
 
       return {
@@ -108,12 +110,32 @@ app.get('/activate-campaign/:campaignId', (req, res) => {
   campaigns.activate(req.params.campaignId);
 })
 
+app.get('/get-sendable/:campaignId', (req, res) => {
+  res.sendStatus(200);
+  campaigns.getCommsToSend(req.params.campaignId)
+  .then(comms => {
+    console.log(comms);
+  })
+})
+
 app.post('/message-id', (req, res) => {
   console.log(req.body.communication_id, req.body.message_id);
+  communications.markAsSent(req.body)
+  .then(result => {
+    console.log(result);
+    setTimeout(() => {
+      res.sendStatus(200);
+    }, 300);
+  })
   // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)
   // .then(result => {
 
   // })
+})
+
+app.post('/create-template', (req, res) => {
+  templates.createTemplate(req.body);
+  res.sendStatus(200);
 })
 
 http.listen(PORT || 1560, () => {

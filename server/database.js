@@ -27,12 +27,12 @@ class Database {
   }
 
   // Updates single record into specified table.
-  updateRecord(record, tableName, updateKey, updateValue) {
+  updateRecord(updateRecord, tableName, matchKey, matchValue) {
     const timeNow = new Date(Date.now()).toISOString();
-    record.updated_at = timeNow;
+    updateRecord.updated_at = timeNow;
     return knex(tableName)
-           .where(updateKey, updateValue)
-           .update(record)
+      .where(matchKey, matchValue)
+      .update(updateRecord)
   }
 
   // Returns true if value for a column in specified table exists
@@ -46,10 +46,16 @@ class Database {
   }
 
   // Returns all columns of single row of given table
-  getRecord(recordKey, recordValue, tableName) {
+  getRecords(recordKey, recordValue, tableName) {
     return knex(tableName)
            .select('*')
            .where(recordKey, recordValue)
+  }
+
+  getRecordsByArray(recordKey, arrRecordValues, tableName) {
+    return knex(tableName)
+           .select('*')
+           .where(recordKey, 'in', arrRecordValues)
   }
   
   // upserts should be generic with formatting done by record-specific classes
@@ -136,6 +142,13 @@ class Database {
     return knex('leads')
       .select('id')
       .where('instagram_username', 'in', usernames)
+  }
+
+  getActiveLeadsByCampaignId(campaignId) {
+    const subquery = knex('campaigns_leads').select('lead_id').where('campaign_id', campaignId).andWhere('active', true)
+    return knex('leads')
+      .select('*')
+      .where('id', 'in', subquery)
   }
 
   getLeadsByCampaignId(campaignId) {
