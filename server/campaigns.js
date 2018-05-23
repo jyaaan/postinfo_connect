@@ -32,9 +32,9 @@ class Campaigns {
           body: bodies.body,
           subject: template[0].subject,
           from: 'alext@truefluence.io',
-          to: lead.email,
+          to: 'john.yamashiro@gmail.com',
           html_body: bodies.htmlBody,
-          lead_id: lead.id,
+          lead_id: 'poop',
           campaign_id: campaign[0].id,
           email_template_id: template[0].id,
           scheduled_for: template[0].scheduled_for
