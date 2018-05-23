@@ -118,14 +118,19 @@ app.get('/get-sendable/:campaignId', (req, res) => {
   })
 })
 
+app.get('/get-test-email/:templateId', (req, res) => {
+  campaigns.generateEmailTest(req.params.templateId)
+  .then(comm => {
+    res.send(comm);
+  })
+})
+
 app.post('/message-id', (req, res) => {
   console.log(req.body.communication_id, req.body.message_id);
   communications.markAsSent(req.body)
   .then(result => {
     console.log(result);
-    setTimeout(() => {
-      res.sendStatus(200);
-    }, 300);
+    res.sendStatus(200);
   })
 
   // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)

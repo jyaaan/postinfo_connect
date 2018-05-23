@@ -22,6 +22,28 @@ class Campaigns {
     })
   }
 
+  generateEmailTest(templateId) {
+    return new Promise((resolve, reject) => {
+      this.database.getRecords('id', templateId, 'email_templates')
+      .then(template => {
+        console.log(template[0]);
+        let bodies = this.templates.generateBody(lead, template[0].name);
+        const communication = {
+          body: bodies.body,
+          subject: template[0].subject,
+          from: 'alext@truefluence.io',
+          to: lead.email,
+          html_body: bodies.htmlBody,
+          lead_id: lead.id,
+          campaign_id: campaign[0].id,
+          email_template_id: template[0].id,
+          scheduled_for: template[0].scheduled_for
+        }
+        resolve(communication);
+      })
+    })
+  }
+
   activate(campaignId) {
     this.database.getRecords('id', campaignId, 'campaigns')
     .then(campaign => {
