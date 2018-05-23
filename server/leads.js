@@ -9,7 +9,7 @@ class Leads {
     var validLeadUsernames = [];
     var campaignId;
 
-    this.database.getRecord('name', leads[0].campaign, 'campaigns')
+    this.database.getRecords('name', leads[0].campaign, 'campaigns')
     .then(result => {
       if (result.length > 0) {
         var campaign = result[0];
