@@ -35,7 +35,7 @@ class Campaigns {
           to: 'john.yamashiro@gmail.com',
           html_body: bodies.htmlBody,
           lead_id: 'poop',
-          campaign_id: campaign[0].id,
+          campaign_id: 'scoot',
           email_template_id: template[0].id,
           scheduled_for: template[0].scheduled_for
         }
