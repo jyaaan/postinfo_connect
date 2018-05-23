@@ -27,7 +27,7 @@ class Campaigns {
       this.database.getRecords('id', templateId, 'email_templates')
       .then(template => {
         console.log(template[0]);
-        let bodies = this.templates.generateBody(lead, template[0].name);
+        let bodies = this.templates.generateBody({ first_name: 'Stormie' }, template[0].name);
         const communication = {
           body: bodies.body,
           subject: template[0].subject,
