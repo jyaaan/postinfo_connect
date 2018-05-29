@@ -151,7 +151,7 @@ class Campaigns {
       this.leads.deactivateAssociatedCampaigns(leads[0].id);
       this.leads.deactivateCommunications(leads[0].id, status);
       // set lead stage to whatever the new one is
-      var reason = stage == 'Unqualified' ? status : null;
+      var reason = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
       this.database.updateRecord({
         stage: stage,
         lost_reason: reason
@@ -167,7 +167,7 @@ class Campaigns {
         this.leads.deactivateAssociatedCampaigns(leads[0].id);
         this.leads.deactivateCommunications(leads[0].id, status);
         // set lead stage to whatever the new one is
-        var leadStatus = stage == 'Unqualified' ? status : null;
+        var leadStatus = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
         this.database.updateRecord({
           stage: stage,
           lost_reason: leadStatus
