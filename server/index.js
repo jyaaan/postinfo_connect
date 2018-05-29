@@ -118,6 +118,23 @@ app.get('/get-sendable/:campaignId', (req, res) => {
   })
 })
 
+app.get('/deactivate-email/:email/:status', (req, res) => {
+  console.log(req.params);
+  // deactivate the campaign-lead connection
+  // find lead userid, find all campaigns_leads, set active to false
+  // deactivate any existing communications as well.
+  // do this by setting communication status to status
+  // communications.setStatus();
+  // update the lead's information by setting stage to status
+  campaigns.deactivateByEmail(req.params.email, req.params.status);
+  res.sendStatus(200);
+})
+
+app.get('/deactivate-username/:username/:status', (req, res) => {
+  campaigns.deactivateByUsername(req.params.email, req.params.status);
+  res.sendStatus(200);
+})
+
 app.get('/get-test-email/:templateId', (req, res) => {
   campaigns.generateEmailTest(req.params.templateId)
   .then(comm => {

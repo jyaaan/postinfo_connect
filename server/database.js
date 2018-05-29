@@ -23,6 +23,7 @@ class Database {
     record.created_at = timeNow;
     record.updated_at = timeNow;
     return knex(tableName)
+           .returning('*')
            .insert(record);
   }
 

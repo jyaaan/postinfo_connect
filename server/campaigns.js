@@ -7,7 +7,6 @@ class Campaigns {
   }
 
   getAssociatedLeads(campaignId) {
-
   }
 
   upsertCampaignsEmailTemplates(obj) {
@@ -135,6 +134,28 @@ class Campaigns {
         reject(err);
       })
     })
+  }
+
+  // deactivate the campaign-lead connection
+  // find lead userid, find all campaigns_leads, set active to false
+  deactivateByEmail(email, status) {
+    this.leads.getLeadByEmail(email)
+    .then(leads => {
+      // console.log(leads[0].id);
+      this.leads.deactivateAssociatedCampaigns(leads[0].id);
+      this.leads.deactivateCommunications(leads[0].id, status);
+    })
+    .catch(console.error);
+  }
+
+  deactivateByUsername(username, status) {
+    this.leads.getLeadByUsername(username)
+      .then(leads => {
+        // console.log(leads[0].id);
+        this.leads.deactivateAssociatedCampaigns(leads[0].id);
+        this.leads.deactivateCommunications(leads[0].id, status);
+      })
+      .catch(console.error);
   }
 }
 
