@@ -144,22 +144,34 @@ class Campaigns {
 
   // deactivate the campaign-lead connection
   // find lead userid, find all campaigns_leads, set active to false
-  deactivateByEmail(email, status) {
+  deactivateByEmail(email, status, stage) {
     this.leads.getLeadByEmail(email)
     .then(leads => {
       // console.log(leads[0].id);
       this.leads.deactivateAssociatedCampaigns(leads[0].id);
       this.leads.deactivateCommunications(leads[0].id, status);
+      // set lead stage to whatever the new one is
+      var reason = stage == 'Unqualified' ? status : null;
+      this.database.updateRecord({
+        stage: stage,
+        lost_reason: reason
+      }, 'leads', 'id', leads[0].id);
     })
     .catch(console.error);
   }
 
-  deactivateByUsername(username, status) {
+  deactivateByUsername(username, status, stage) {
     this.leads.getLeadByUsername(username)
       .then(leads => {
         // console.log(leads[0].id);
         this.leads.deactivateAssociatedCampaigns(leads[0].id);
         this.leads.deactivateCommunications(leads[0].id, status);
+        // set lead stage to whatever the new one is
+        var leadStatus = stage == 'Unqualified' ? status : null;
+        this.database.updateRecord({
+          stage: stage,
+          lost_reason: leadStatus
+        }, 'leads', 'id', leads[0].id);
       })
       .catch(console.error);
   }
