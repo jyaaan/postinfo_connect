@@ -1,3 +1,5 @@
+const async = require('async');
+
 class Campaigns {
   constructor(database, templates, leads, communications) {
     this.database = database;
@@ -74,6 +76,10 @@ class Campaigns {
                 }
                 this.communications.createCommunication(communication);
               })
+
+              this.database.updateRecord({
+                stage: 'Working'
+              }, 'leads', 'id', lead.id);
             })
           })
         })
