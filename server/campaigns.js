@@ -147,7 +147,7 @@ class Campaigns {
   deactivateByEmail(email, status, stage) {
     this.leads.getLeadByEmail(email)
     .then(leads => {
-      // console.log(leads[0].id);
+      console.log(leads[0].id);
       this.leads.deactivateAssociatedCampaigns(leads[0].id);
       this.leads.deactivateCommunications(leads[0].id, status);
       // set lead stage to whatever the new one is
