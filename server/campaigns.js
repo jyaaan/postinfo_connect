@@ -147,12 +147,12 @@ class Campaigns {
   deactivateByEmail(email, status, stage) {
     this.leads.getLeadByEmail(email)
     .then(leads => {
-      console.log(leads[0].id);
+      // console.log(leads[0].id);
       this.leads.deactivateAssociatedCampaigns(leads[0].id);
       this.leads.deactivateCommunications(leads[0].id, status);
       // set lead stage to whatever the new one is
       var reason = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
-      console.log(reason);
+      // console.log(reason);
       this.database.updateRecord({
         stage: stage,
         lost_reason: reason
@@ -165,18 +165,21 @@ class Campaigns {
 
   deactivateByUsername(username, status, stage) {
     this.leads.getLeadByUsername(username)
-      .then(leads => {
-        // console.log(leads[0].id);
-        this.leads.deactivateAssociatedCampaigns(leads[0].id);
-        this.leads.deactivateCommunications(leads[0].id, status);
-        // set lead stage to whatever the new one is
-        var leadStatus = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
-        this.database.updateRecord({
-          stage: stage,
-          lost_reason: leadStatus
-        }, 'leads', 'id', leads[0].id);
-      })
-      .catch(console.error);
+    .then(leads => {
+      // console.log(leads[0].id);
+      this.leads.deactivateAssociatedCampaigns(leads[0].id);
+      this.leads.deactivateCommunications(leads[0].id, status);
+      // set lead stage to whatever the new one is
+      var reason = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
+      // console.log(reason);
+      this.database.updateRecord({
+        stage: stage,
+        lost_reason: reason
+      }, 'leads', 'id', leads[0].id)
+        .then(console.log)
+        .catch(console.error);
+    })
+    .catch(console.error);
   }
 }
 

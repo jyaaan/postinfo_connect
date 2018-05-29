@@ -131,6 +131,7 @@ app.get('/deactivate-email/:email/:status/:stage', (req, res) => {
 })
 
 app.get('/deactivate-username/:username/:status/:stage', (req, res) => {
+  console.log(req.params);
   campaigns.deactivateByUsername(req.params.email, req.params.status, req.params.stage);
   res.sendStatus(200);
 })
