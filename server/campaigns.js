@@ -152,10 +152,13 @@ class Campaigns {
       this.leads.deactivateCommunications(leads[0].id, status);
       // set lead stage to whatever the new one is
       var reason = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
+      console.log(reason);
       this.database.updateRecord({
         stage: stage,
         lost_reason: reason
-      }, 'leads', 'id', leads[0].id);
+      }, 'leads', 'id', leads[0].id)
+      .then(console.log)
+      .catch(console.error);
     })
     .catch(console.error);
   }
