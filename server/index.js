@@ -145,7 +145,7 @@ app.get('/get-test-email/:templateId', (req, res) => {
 })
 
 app.get('/fix-message-id/:email/:message_id', (req, res) => {
-  console.log(req.params);
+  // console.log(req.params);
   leads.getLeadByEmail(req.params.email)
   .then(lead => {
     database.getRecords('lead_id', lead[0].id, 'communications')
@@ -161,6 +161,7 @@ app.get('/fix-message-id/:email/:message_id', (req, res) => {
     })
   })
   .catch(err => {
+    console.log(req.params);
     res.sendStatus(201);
   })
 })
