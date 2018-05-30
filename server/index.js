@@ -143,6 +143,15 @@ app.get('/get-test-email/:templateId', (req, res) => {
   })
 })
 
+app.get('/fix-message-id/:email', (req, res) => {
+  leads.getLeadByEmail(req.params.email)
+  .then(lead => {
+    console.log(lead.id);
+    // this.database.getRecords('lead_id', )
+    res.sendStatus(200);
+  })
+})
+
 app.post('/message-id', (req, res) => {
   console.log(req.body.communication_id, req.body.message_id);
   communications.markAsSent(req.body)
