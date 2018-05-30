@@ -146,7 +146,7 @@ app.get('/get-test-email/:templateId', (req, res) => {
 
 app.get('/fix-message-id/:email/:message_id', (req, res) => {
   // console.log(req.params);
-  leads.getLeadByEmail(req.params.email)
+  leads.getLeadByEmail(req.params.email.toLowerCase())
   .then(lead => {
     database.getRecords('lead_id', lead[0].id, 'communications')
     .then(comms => {
@@ -163,6 +163,21 @@ app.get('/fix-message-id/:email/:message_id', (req, res) => {
   .catch(err => {
     console.log(req.params);
     res.sendStatus(200);
+  })
+})
+
+app.get('/fix-email-case', (req, res) => {
+  database.getAllRecords('leads')
+  .then(leads => {
+    async.eachSeries(leads, (lead, next) => {
+      database.updateRecord({
+        instagram_username: lead.instagram_username.toLowerCase(),
+        email: lead.email.toLowerCase()
+      }, 'leads', 'id', lead.id)
+      .then(() => {
+        next();
+      })
+    })
   })
 })
 
