@@ -8,6 +8,7 @@ const express = require('express');
 const app = express();
 const staticMiddleware = express.static(publicPath);
 const http = require('http').createServer(app);
+const async = require('async');
 
 app.use(staticMiddleware);
 app.use(bodyParser.json());
@@ -143,12 +144,20 @@ app.get('/get-test-email/:templateId', (req, res) => {
   })
 })
 
-app.get('/fix-message-id/:email', (req, res) => {
+app.get('/fix-message-id/:email/:message_id', (req, res) => {
   leads.getLeadByEmail(req.params.email)
   .then(lead => {
-    console.log(lead[0].id);
-    // this.database.getRecords('lead_id', )
-    res.sendStatus(200);
+    this.database.getRecords('lead_id', lead[0].id, 'communications')
+    .then(comms => {
+      async.eachSeries(comms, (comm, next) => {
+        this.database.updateRecord({ message_id: req.params.message_id }, 'communications', 'id', comm.id)
+        .then(() => {
+          next();
+        })
+      }, err => {
+        res.send(200);
+      })
+    })
   })
 })
 
