@@ -147,10 +147,10 @@ app.get('/get-test-email/:templateId', (req, res) => {
 app.get('/fix-message-id/:email/:message_id', (req, res) => {
   leads.getLeadByEmail(req.params.email)
   .then(lead => {
-    this.database.getRecords('lead_id', lead[0].id, 'communications')
+    database.getRecords('lead_id', lead[0].id, 'communications')
     .then(comms => {
       async.eachSeries(comms, (comm, next) => {
-        this.database.updateRecord({ message_id: req.params.message_id }, 'communications', 'id', comm.id)
+        database.updateRecord({ message_id: req.params.message_id }, 'communications', 'id', comm.id)
         .then(() => {
           next();
         })
