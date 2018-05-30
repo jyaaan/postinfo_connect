@@ -162,7 +162,7 @@ app.get('/fix-message-id/:email/:message_id', (req, res) => {
   })
   .catch(err => {
     console.log(req.params);
-    res.sendStatus(201);
+    res.sendStatus(200);
   })
 })
 
