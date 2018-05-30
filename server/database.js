@@ -53,6 +53,11 @@ class Database {
            .where(recordKey, recordValue)
   }
 
+  getAllRecords(tableName) {
+    return knex(tableName)
+           .select('*')
+  }
+
   getRecordsByArray(recordKey, arrRecordValues, tableName) {
     return knex(tableName)
            .select('*')
