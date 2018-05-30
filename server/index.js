@@ -160,6 +160,9 @@ app.get('/fix-message-id/:email/:message_id', (req, res) => {
       })
     })
   })
+  .catch(err => {
+    res.sendStatus(201);
+  })
 })
 
 app.post('/message-id', (req, res) => {
