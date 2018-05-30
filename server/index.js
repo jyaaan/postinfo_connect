@@ -155,7 +155,7 @@ app.get('/fix-message-id/:email/:message_id', (req, res) => {
           next();
         })
       }, err => {
-        res.send(200);
+        res.sendStatus(200);
       })
     })
   })
