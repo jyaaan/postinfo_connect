@@ -23,6 +23,7 @@ class Database {
     record.created_at = timeNow;
     record.updated_at = timeNow;
     return knex(tableName)
+           .returning('*')
            .insert(record);
   }
 
@@ -50,6 +51,11 @@ class Database {
     return knex(tableName)
            .select('*')
            .where(recordKey, recordValue)
+  }
+
+  getAllRecords(tableName) {
+    return knex(tableName)
+           .select('*')
   }
 
   getRecordsByArray(recordKey, arrRecordValues, tableName) {

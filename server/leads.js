@@ -42,7 +42,7 @@ class Leads {
                   campaign_id: campaignId,
                   created_at: timeNow,
                   updated_at: timeNow,
-                  active: false
+                  active: true
                 }
               })
               this.database.upsertCampaignsLeads(campaignsLeadsInserts)
@@ -63,6 +63,30 @@ class Leads {
       }
 
     })
+  }
+
+  getLeadByEmail(email) {
+    return this.database.getRecords('email', email, 'leads');
+  }
+
+  getLeadByUsername(username) {
+    return this.database.getRecords('instagram_username', username, 'leads');
+  }
+
+  getAssociatedCommunications(leadId) {
+    return this.database.getRecords('lead_id', leadId, 'communications');
+  }
+
+  deactivateCommunications(leadId, status) {
+    this.database.updateRecord({ status: status }, 'communications', 'lead_id', leadId)
+    .then(console.log)
+    .catch(console.error);
+  }
+
+  deactivateAssociatedCampaigns(leadId) {
+    this.database.updateRecord({ active: false }, 'campaigns_leads', 'lead_id', leadId)
+    .then(console.log)
+    .catch(console.error);
   }
 
   assignToCampaign(leadId, campaignId) {

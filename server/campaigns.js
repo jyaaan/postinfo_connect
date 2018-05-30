@@ -1,3 +1,5 @@
+const async = require('async');
+
 class Campaigns {
   constructor(database, templates, leads, communications) {
     this.database = database;
@@ -7,7 +9,6 @@ class Campaigns {
   }
 
   getAssociatedLeads(campaignId) {
-
   }
 
   upsertCampaignsEmailTemplates(obj) {
@@ -75,6 +76,10 @@ class Campaigns {
                 }
                 this.communications.createCommunication(communication);
               })
+
+              this.database.updateRecord({
+                stage: 'Working'
+              }, 'leads', 'id', lead.id);
             })
           })
         })
@@ -135,6 +140,46 @@ class Campaigns {
         reject(err);
       })
     })
+  }
+
+  // deactivate the campaign-lead connection
+  // find lead userid, find all campaigns_leads, set active to false
+  deactivateByEmail(email, status, stage) {
+    this.leads.getLeadByEmail(email)
+    .then(leads => {
+      // console.log(leads[0].id);
+      this.leads.deactivateAssociatedCampaigns(leads[0].id);
+      this.leads.deactivateCommunications(leads[0].id, status);
+      // set lead stage to whatever the new one is
+      var reason = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
+      // console.log(reason);
+      this.database.updateRecord({
+        stage: stage,
+        lost_reason: reason
+      }, 'leads', 'id', leads[0].id)
+      .then(console.log)
+      .catch(console.error);
+    })
+    .catch(console.error);
+  }
+
+  deactivateByUsername(username, status, stage) {
+    this.leads.getLeadByUsername(username)
+    .then(leads => {
+      // console.log(leads[0].id);
+      this.leads.deactivateAssociatedCampaigns(leads[0].id);
+      this.leads.deactivateCommunications(leads[0].id, status);
+      // set lead stage to whatever the new one is
+      var reason = (stage == 'Unqualified' || stage == 'Paused') ? status : null;
+      // console.log(reason);
+      this.database.updateRecord({
+        stage: stage,
+        lost_reason: reason
+      }, 'leads', 'id', leads[0].id)
+        .then(console.log)
+        .catch(console.error);
+    })
+    .catch(console.error);
   }
 }
 

@@ -8,6 +8,7 @@ const express = require('express');
 const app = express();
 const staticMiddleware = express.static(publicPath);
 const http = require('http').createServer(app);
+const async = require('async');
 
 app.use(staticMiddleware);
 app.use(bodyParser.json());
@@ -118,10 +119,68 @@ app.get('/get-sendable/:campaignId', (req, res) => {
   })
 })
 
+app.get('/deactivate-email/:email/:status/:stage', (req, res) => {
+  console.log(req.params);
+  // deactivate the campaign-lead connection
+  // find lead userid, find all campaigns_leads, set active to false
+  // deactivate any existing communications as well.
+  // do this by setting communication status to status
+  // communications.setStatus();
+  // update the lead's information by setting stage to status
+  campaigns.deactivateByEmail(req.params.email, req.params.status, req.params.stage);
+  res.sendStatus(200);
+})
+
+app.get('/deactivate-username/:username/:status/:stage', (req, res) => {
+  console.log(req.params);
+  campaigns.deactivateByUsername(req.params.username, req.params.status, req.params.stage);
+  res.sendStatus(200);
+})
+
 app.get('/get-test-email/:templateId', (req, res) => {
   campaigns.generateEmailTest(req.params.templateId)
   .then(comm => {
     res.send(comm);
+  })
+})
+
+app.get('/fix-message-id/:email/:message_id', (req, res) => {
+  console.log(req.params);
+  leads.getLeadByEmail(req.params.email.toLowerCase())
+  .then(lead => {
+    database.getRecords('lead_id', lead[0].id, 'communications')
+    .then(comms => {
+      async.eachSeries(comms, (comm, next) => {
+        database.updateRecord({ message_id: req.params.message_id }, 'communications', 'id', comm.id)
+        .then(() => {
+          next();
+        })
+      }, err => {
+        res.sendStatus(200);
+      })
+    })
+  })
+  .catch(err => {
+    // console.log(req.params);
+    res.sendStatus(200);
+  })
+})
+
+app.get('/fix-email-case', (req, res) => {
+  database.getAllRecords('leads')
+  .then(leads => {
+    async.eachSeries(leads, (lead, next) => {
+      database.updateRecord({
+        instagram_username: lead.instagram_username.toLowerCase(),
+        email: lead.email.toLowerCase()
+      }, 'leads', 'id', lead.id)
+      .then(() => {
+        next();
+      })
+    }, err => {
+      res.sendStatus(200);
+      console.log('done');
+    })
   })
 })
 
