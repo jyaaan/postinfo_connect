@@ -177,6 +177,9 @@ app.get('/fix-email-case', (req, res) => {
       .then(() => {
         next();
       })
+    }, err => {
+      res.sendStatus(200);
+      console.log('done');
     })
   })
 })
