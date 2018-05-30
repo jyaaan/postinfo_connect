@@ -146,7 +146,7 @@ app.get('/get-test-email/:templateId', (req, res) => {
 app.get('/fix-message-id/:email', (req, res) => {
   leads.getLeadByEmail(req.params.email)
   .then(lead => {
-    console.log(lead.id);
+    console.log(lead[0].id);
     // this.database.getRecords('lead_id', )
     res.sendStatus(200);
   })
