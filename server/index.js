@@ -132,13 +132,13 @@ app.get('/deactivate-email/:email/:status/:stage', (req, res) => {
   // do this by setting communication status to status
   // communications.setStatus();
   // update the lead's information by setting stage to status
-  campaigns.deactivateByEmail(req.params.email, req.params.status, req.params.stage);
+  campaigns.deactivateByEmail(req.params.email.toLowerCase(), req.params.status, req.params.stage);
   res.sendStatus(200);
 })
 
 app.get('/deactivate-username/:username/:status/:stage', (req, res) => {
   console.log(req.params);
-  campaigns.deactivateByUsername(req.params.username, req.params.status, req.params.stage);
+  campaigns.deactivateByUsername(req.params.username.toLowerCase(), req.params.status, req.params.stage);
   res.sendStatus(200);
 })
 
@@ -169,6 +169,28 @@ app.get('/fix-message-id/:email/:message_id', (req, res) => {
     // console.log(req.params);
     res.sendStatus(200);
   })
+})
+
+app.get('/fix-thread-id/:email/:thread_id', (req, res) => {
+  console.log(req.params);
+  leads.getLeadByEmail(req.params.email.toLowerCase())
+    .then(lead => {
+      database.getRecords('lead_id', lead[0].id, 'campaigns_leads')
+        .then(relationships => {
+          async.eachSeries(relationships, (relationship, next) => {
+            database.updateRecord({ thread_id: req.params.thread_id }, 'campaigns_leads', 'id', relationship.id)
+              .then(() => {
+                next();
+              })
+          }, err => {
+            res.sendStatus(200);
+          })
+        })
+    })
+    .catch(err => {
+      // console.log(req.params);
+      res.sendStatus(200);
+    })
 })
 
 app.get('/fix-email-case', (req, res) => {
