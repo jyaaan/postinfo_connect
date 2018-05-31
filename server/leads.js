@@ -22,6 +22,7 @@ class Leads {
             .then(leadAdd => {
               // console.log('raw return: ', leadAdd);
               validLeadUsernames.push(lead.instagram_username);
+              next();
             })
             .catch(err => {
               // console.error(err);
@@ -29,8 +30,8 @@ class Leads {
                 instagram_username: lead.instagram_username,
                 error: 'Upsert error' + err
               })
+              next();
             })
-            next();
           }, err => {
             console.log('there were ' + errorHistory.length + ' errors.');
             console.log(errorHistory);

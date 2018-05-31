@@ -152,6 +152,12 @@ class Database {
 
   getLeadIdsByUsernames(usernames) {
     return knex('leads')
+      .select('id')
+      .where('instagram_username', 'in', usernames)
+  }
+
+  getLeadsByUsernames(usernames) {
+    return knex('leads')
       .select('*')
       .where('instagram_username', 'in', usernames)
   }
