@@ -15,12 +15,8 @@ class Campaigns {
     const dateString = obj.scheduled_for;
     obj.scheduled_for = new Date(obj.scheduled_for).toISOString();
     this.database.upsertCampaignsEmailTemplates(obj)
-    .then(result => {
-      console.log(result);
-    })
-    .catch(err => {
-      console.error(err);
-    })
+    .then(console.log)
+    .catch(console.error)
   }
 
   generateEmailTest(templateId) {
@@ -45,6 +41,16 @@ class Campaigns {
     })
   }
 
+  testRemainingDays(campaignId) {
+    this.database.getRecords('id', campaignId, 'campaigns')
+      .then(campaign => {
+        const timeNow = new Date();
+        console.log(campaign[0].ended_at);
+        console.log(timeNow);
+        console.log(campaign[0].ended_at - timeNow);
+      })
+  }
+
   activate(campaignId) {
     this.database.getRecords('id', campaignId, 'campaigns')
     .then(campaign => {
@@ -53,7 +59,7 @@ class Campaigns {
         this.database.updateRecord({stage: 'Active'}, 'campaigns', 'id', campaign[0].id)
         .then(console.log)
         .catch(console.error)
-        // get all leads
+        // get all active leads
         this.getActiveLeads(campaign[0].id)
         .then(leads => {
           // console.log(leads);
@@ -62,6 +68,9 @@ class Campaigns {
           .then(templates => {
             leads.forEach(lead => {
               templates.forEach(template => {
+                // this is where you should generate days until.
+                campaign[0].ended_at;
+
                 let bodies = this.templates.generateBody(lead, template[0].name);
                 const communication = {
                   body: bodies.body,
@@ -83,9 +92,7 @@ class Campaigns {
             })
           })
         })
-        .catch(err => {
-          console.error(err);
-        })
+        .catch(console.error)
 
         // for each lead, create communications and relationships
 
@@ -112,13 +119,9 @@ class Campaigns {
                   })
                   resolve(sendableComms);
                 })
-                .catch(err => {
-                  reject(err);
-                })
+                .catch(reject)
               })
-              .catch(err => {
-                reject(err);
-              })
+              .catch(reject)
 
             // for each lead, create communications and relationships
 
@@ -133,12 +136,8 @@ class Campaigns {
   getActiveLeads(campaignId) {
     return new Promise((resolve, reject) => {
       this.database.getActiveLeadsByCampaignId(campaignId)
-      .then(leads => {
-        resolve(leads);
-      })
-      .catch(err => {
-        reject(err);
-      })
+      .then(resolve)
+      .catch(reject)
     })
   }
 

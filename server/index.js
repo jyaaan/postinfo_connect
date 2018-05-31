@@ -106,6 +106,11 @@ app.post('/assign-template', (req, res) => {
   res.sendStatus(200);
 })
 
+app.get('/test-remaining-days/:campaignId', (req, res) => {
+  campaigns.testRemainingDays(req.params.campaignId);
+  res.sendStatus(200);
+})
+
 app.get('/activate-campaign/:campaignId', (req, res) => {
   res.sendStatus(200);
   campaigns.activate(req.params.campaignId);
