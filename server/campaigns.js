@@ -66,11 +66,11 @@ class Campaigns {
           // get all active templates
           this.templates.getTemplatesForCampaign(campaign[0].id)
           .then(templates => {
+            // this is where you should generate days until.
+            const remainingDays = daysUntil(campaign[0].ended_at);
             leads.forEach(lead => {
               templates.forEach(template => {
-                // this is where you should generate days until.
-                campaign[0].ended_at;
-
+                lead.remaining_days = remainingDays;
                 let bodies = this.templates.generateBody(lead, template[0].name);
                 const communication = {
                   body: bodies.body,
@@ -180,6 +180,11 @@ class Campaigns {
     })
     .catch(console.error);
   }
+}
+
+const daysUntil = endDate => {
+  const timeNow = new Date();
+  return Math.round((endDate - timeNow) / 1000 / 60 / 60 / 24);
 }
 
 module.exports = Campaigns;

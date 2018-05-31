@@ -25,23 +25,30 @@ class Templates {
 
   generateBody(lead, templateName) {
     const htmlBody = pug.renderFile(templatePath + '/' + templateName, {
-      first_name: lead.first_name
+      first_name: lead.first_name,
+      remaining_days: lead.remaining_days
     })
     const body = h2p(htmlBody);
     return { htmlBody: htmlBody, body: body };
   }
 
+  // returns all active template objects for a given campaign id
   getTemplatesForCampaign(campaignId) {
     var templates = [];
     return new Promise((resolve, reject) => {
+      // query join table to get all email templates associated with campaign
       this.database.getRecords('campaign_id', campaignId, 'campaigns_email_templates')
       .then(allRelationships => {
+        // filter for active templates to prevent re-sending same messaging.
         const relationships = allRelationships.filter(relationship => { return relationship.active });
         async.eachSeries(relationships, (relationship, next) => {
+          // deactivate relationship being returned
+          // this step should later be moved after confirmation of comm generation
           this.database.updateRecord({ active: false }, 'campaigns_email_templates', 'id', relationship.id)
           .then(result => {
             this.database.getRecords('id', relationship.email_template_id, 'email_templates')
             .then(template => {
+              // adding send date to template to use when creating comms
               template[0].scheduled_for = relationship.scheduled_for;
               templates.push(template);
               next();
