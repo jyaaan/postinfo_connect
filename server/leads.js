@@ -14,6 +14,8 @@ class Leads {
       if (result.length > 0) {
         var campaign = result[0];
         campaignId = result[0].id;
+
+        // Can only add leads to Planned campaigns
         if (campaign.stage == 'Planned') {
           async.eachSeries(leads, (lead, next) => {
             this.database.upsertLead(lead)
@@ -34,11 +36,12 @@ class Leads {
             console.log('there were ' + errorHistory.length + ' errors.');
             console.log(errorHistory);
             const timeNow = new Date(Date.now()).toISOString();
-            this.database.getLeadIdsByUsernames(validLeadUsernames)
-            .then(ids => {
-              const campaignsLeadsInserts = ids.map(idObj => {
+            this.database.getLeadsByUsernames(validLeadUsernames)
+            .then(leads => {
+              const validLeads = leads.filter(lead => { return lead.stage == 'New' });
+              const campaignsLeadsInserts = validLeads.map(lead => {
                 return {
-                  lead_id: idObj.id,
+                  lead_id: lead.id,
                   campaign_id: campaignId,
                   created_at: timeNow,
                   updated_at: timeNow,
@@ -46,8 +49,12 @@ class Leads {
                 }
               })
               this.database.upsertCampaignsLeads(campaignsLeadsInserts)
-              .then(resultQuery => {
-                console.log(resultQuery);
+              .then(resultQ => {
+                const leadIds = validLeads.map(lead => { return lead.id });
+                this.database.setLeadStages(leadIds, 'Working')
+                .then(resultQuery => {
+                  console.log(resultQuery);
+                })
               })
               .catch(err => {
                 console.log('error upserting campaign leads join rows');

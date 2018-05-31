@@ -150,6 +150,12 @@ class Database {
       .where('instagram_username', 'in', usernames)
   }
 
+  getLeadIdsByUsernames(usernames) {
+    return knex('leads')
+      .select('*')
+      .where('instagram_username', 'in', usernames)
+  }
+
   getActiveLeadsByCampaignId(campaignId) {
     const subquery = knex('campaigns_leads').select('lead_id').where('campaign_id', campaignId).andWhere('active', true)
     return knex('leads')
@@ -162,6 +168,12 @@ class Database {
     return knex('leads')
            .select('*')
            .where('id', 'in', subquery)
+  }
+
+  setLeadStages(leadIds, stage) {
+    return knex('leads')
+           .where('id', 'in', leadIds)
+           .update({ stage: stage })
   }
 
   raw(query) {
