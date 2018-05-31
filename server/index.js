@@ -225,6 +225,20 @@ app.post('/message-id', (req, res) => {
   // })
 })
 
+app.post('/thread-id', (req, res) => {
+  console.log(req.body.communication_id, req.body.thread_id);
+  communications.markAsSent(req.body)
+    .then(result => {
+      console.log(result);
+      res.sendStatus(200);
+    })
+
+  // database.updateRecord({ message_id: message_id }, 'communications', 'communication_id', communication_id)
+  // .then(result => {
+
+  // })
+})
+
 app.post('/create-template', (req, res) => {
   templates.createTemplate(req.body);
   res.sendStatus(200);
