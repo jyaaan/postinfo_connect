@@ -47,7 +47,7 @@ class Campaigns {
         const timeNow = new Date();
         console.log(campaign[0].ended_at);
         console.log(timeNow);
-        console.log((campaign[0].ended_at - timeNow) / 1000 / 60 / 60 / 24);
+        console.log(Math.round((campaign[0].ended_at - timeNow) / 1000 / 60 / 60 / 24));
       })
   }
 
