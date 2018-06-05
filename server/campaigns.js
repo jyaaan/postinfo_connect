@@ -110,8 +110,8 @@ class Campaigns {
           if (campaign.length > 0) {
             // get all leads
             // wait why is this here?
-            this.getActiveLeadRelationships(campaign[0].id)
-              .then(relationships => {
+            // this.getActiveLeadRelationships(campaign[0].id)
+            //   .then(relationships => {
                 this.communications.getCommunicationsByCampaign(campaignId)
                 .then(comms => {
                   let timeNow = new Date(Date.now());
@@ -121,8 +121,8 @@ class Campaigns {
                   resolve(sendableComms);
                 })
                 .catch(reject)
-              })
-              .catch(reject)
+              // })
+              // .catch(reject)
 
             // for each lead, create communications and relationships
 
