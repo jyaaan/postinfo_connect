@@ -64,7 +64,7 @@ class Campaigns {
         .then(leads => {
           // console.log(leads);
           // get all active templates
-          this.getRecords('campaign_id', campaign[0].id, 'campaigns_leads')
+          this.database.getRecords('campaign_id', campaign[0].id, 'campaigns_leads')
           .then(rels => {
             console.log(rels[0]);
             // this.templates.getTemplatesForCampaign(campaign[0].id)
