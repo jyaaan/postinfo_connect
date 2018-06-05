@@ -141,6 +141,17 @@ class Campaigns {
       .catch(reject)
     })
   }
+  getActiveLeads(campaignId) {
+    return new Promise((resolve, reject) => {
+      this.database.getActiveLeadsByCampaignId(campaignId)
+        .then(leads => {
+          resolve(leads);
+        })
+        .catch(err => {
+          reject(err);
+        })
+    })
+  }
 
   getEnrichedCommunications(campaignId) {
     let timeNow = new Date(Date.now());
