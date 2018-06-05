@@ -64,35 +64,42 @@ class Campaigns {
         .then(leads => {
           // console.log(leads);
           // get all active templates
-          this.templates.getTemplatesForCampaign(campaign[0].id)
-          .then(templates => {
-            // this is where you should generate days until.
-            const remainingDays = daysUntil(campaign[0].ended_at);
-            leads.forEach(lead => {
-              templates.forEach(template => {
-                lead.remaining_days = remainingDays;
-                let bodies = this.templates.generateBody(lead, template[0].name);
-                const communication = {
-                  body: bodies.body,
-                  subject: template[0].subject,
-                  from: 'alext@truefluence.io',
-                  to: lead.email,
-                  html_body: bodies.htmlBody,
-                  lead_id: lead.id,
-                  campaign_id: campaign[0].id,
-                  email_template_id: template[0].id,
-                  scheduled_for: template[0].scheduled_for
-                }
-                this.communications.createCommunication(communication);
-              })
-
-              this.database.updateRecord({
-                stage: 'Working'
-              }, 'leads', 'id', lead.id);
-            })
+          this.getRecords('campaign_id', campaign[0].id, 'campaigns_leads')
+          .then(rels => {
+            console.log(rels[0]);
+            // this.templates.getTemplatesForCampaign(campaign[0].id)
+            // .then(templates => {
+            //   // this is where you should generate days until.
+            //   const remainingDays = daysUntil(campaign[0].ended_at);
+            //   // async.eachSeries(leads, (lead, next) => {
+                
+            //   // })
+            //   leads.forEach(lead => {
+            //     templates.forEach(template => {
+            //       lead.remaining_days = remainingDays;
+            //       let bodies = this.templates.generateBody(lead, template[0].name);
+            //       const communication = {
+            //         body: bodies.body,
+            //         subject: template[0].subject,
+            //         from: 'alext@truefluence.io',
+            //         to: lead.email,
+            //         html_body: bodies.htmlBody,
+            //         lead_id: lead.id,
+            //         campaign_id: campaign[0].id,
+            //         email_template_id: template[0].id,
+            //         scheduled_for: template[0].scheduled_for
+            //       }
+            //       this.communications.createCommunication(communication);
+            //     })
+  
+            //     this.database.updateRecord({
+            //       stage: 'Working'
+            //     }, 'leads', 'id', lead.id);
+            //   })
+            // })
           })
-        })
-        .catch(console.error)
+          .catch(console.error)
+          })
 
         // for each lead, create communications and relationships
 
