@@ -28,23 +28,6 @@ const campaigns = new (require('./campaigns'))(database, templates, leads, commu
 const pug = require('pug');
 const templatePath = require('path').join(__dirname, '/public/email_templates');
 
-
-app.get('/test-get', (req, res) => {
-  database.getRecords('name', 'someone', 'campaigns')
-    .then(result => {
-      console.log(result);
-    })
-})
-
-app.get('/pug', (req, res) => {
-  res.send(pug.renderFile(templatePath + '/template.pug', {
-    first_name: 'FIRST NAME'
-  }))
-  console.log(pug.renderFile(templatePath + '/template.pug', {
-    first_name: 'FIRST NAME'
-  }));
-})
-
 app.post('/upload-leads', (req, res) => {
   res.sendStatus(200);
   if (req.body.key == 'eatifyjohn') {
@@ -103,11 +86,6 @@ app.post('/update-campaign', (req, res) => {
 // Returns 200 on successful upsert.
 app.post('/assign-template', (req, res) => {
   campaigns.upsertCampaignsEmailTemplates(req.body);
-  res.sendStatus(200);
-})
-
-app.get('/test-remaining-days/:campaignId', (req, res) => {
-  campaigns.testRemainingDays(req.params.campaignId);
   res.sendStatus(200);
 })
 

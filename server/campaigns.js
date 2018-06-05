@@ -109,8 +109,9 @@ class Campaigns {
         .then(campaign => {
           if (campaign.length > 0) {
             // get all leads
-            this.getActiveLeads(campaign[0].id)
-              .then(leads => {
+            // wait why is this here?
+            this.getActiveLeadRelationships(campaign[0].id)
+              .then(relationships => {
                 this.communications.getCommunicationsByCampaign(campaignId)
                 .then(comms => {
                   let timeNow = new Date(Date.now());
@@ -133,10 +134,33 @@ class Campaigns {
     })
   }
 
-  getActiveLeads(campaignId) {
+  getActiveLeadRelationships(campaignId) {
     return new Promise((resolve, reject) => {
-      this.database.getActiveLeadsByCampaignId(campaignId)
+      this.database.getActiveLeadRelationshipsByCampaignId(campaignId)
       .then(resolve)
+      .catch(reject)
+    })
+  }
+
+  getEnrichedCommunications(campaignId) {
+    let timeNow = new Date(Date.now());
+    return new Promise((resolve, reject) => {
+      this.communications.getCommunicationsByCampaign(campaignId)
+      .then(comms => {
+        const sendableComms = comms.filter(comm => {
+          return comm.status == 'Unsent' && comm.scheduled_for < timeNow;
+        })
+        const validLeadIds = sendableComms.map(comm => {
+          return comm.lead_id;
+        })
+        this.database.getRecordsByArray('lead_id', validLeadIds, 'campaigns_leads')
+        .then(relationships => {
+          sendableComms.forEach(comm => {
+            comm.thread_id = relationships.filter(rel => { return rel.lead_id == comm.lead_id }).thread_id;
+          })
+        })
+        .catch(reject)
+      })
       .catch(reject)
     })
   }
